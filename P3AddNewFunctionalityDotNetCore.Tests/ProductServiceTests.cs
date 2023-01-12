@@ -10,7 +10,10 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
         /// returns an expected value from a particular set of parameters
         /// </summary>
         [Fact]
-        public void ExampleMethod()
+        public void Create()
+            // product name check
+            // mocking in all tests cases
+            // mock database -> mock datas --> mock error messages
         {
             // Arrange
 
