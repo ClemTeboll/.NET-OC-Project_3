@@ -6,9 +6,13 @@ using P3AddNewFunctionalityDotNetCore.Models;
 using P3AddNewFunctionalityDotNetCore.Models.Entities;
 using P3AddNewFunctionalityDotNetCore.Models.Repositories;
 using P3AddNewFunctionalityDotNetCore.Models.Services;
+using P3AddNewFunctionalityDotNetCore.Models.ViewModels;
+using P3AddNewFunctionalityDotNetCore.Controllers;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using Xunit;
+using Xunit.Sdk;
 
 namespace P3AddNewFunctionalityDotNetCore.Tests
 {
@@ -20,11 +24,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
         /// returns an expected value from a particular set of parameters
         /// </summary> 
 
-        private readonly ICart cart;
-        private readonly IProductRepository productRepository;
-        private readonly IOrderRepository orderRepository;
-        private readonly IStringLocalizer<ProductService> localizer;
-
         // product name check
         // mocking in all tests cases
         // mock database -> mock datas --> mock error messages
@@ -33,28 +32,68 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
         public void CheckName()
         {
             // Arrange
-            IProductService productService = new ProductService(cart, productRepository, orderRepository, localizer);
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
+
+            var error = new LocalizedString("MissingName", "Please enter a name");
+            mockStringLocalizer.Setup(ml => ml["MissingName"]).Returns(error);
+
+
+          
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
+
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = null,
+                Price = "11",
+                Description = "Test",
+                Stock = "12",
+                Details = "test"
+            };
 
             // Act
-            Product newError = productService.CheckProductModelErrors();
+            var newError = productService.CheckProductModelErrors(product);
+
 
             // Assert
-            //Assert.Same("", product.Name);
-            //Assert.Equal(1, 1);
+            Assert.Contains("Please enter a name", newError);
         }
 
-        //[Fact]
-        //public void CheckPrice()    
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckPrice()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
+
+            var error = new LocalizedString("MissingPrice", "Please add a price");
+            mockStringLocalizer.Setup(ml => ml["MissingPrice"]).Returns(error);
 
 
-        //    // Act
 
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
-        //    // Assert
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = null,
+                Description = "Test",
+                Stock = "12",
+                Details = "test"
+            };
 
-        //}
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
+
+            // Assert
+            Assert.Contains("Please add a price", newError);
+        }
 
         //[Fact]
         //public void CheckPriceNotANumber()
