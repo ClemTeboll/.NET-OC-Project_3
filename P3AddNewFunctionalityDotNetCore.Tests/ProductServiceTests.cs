@@ -41,8 +41,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             var error = new LocalizedString("MissingName", "Please enter a name");
             mockStringLocalizer.Setup(ml => ml["MissingName"]).Returns(error);
 
-
-          
             var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
             ProductViewModel product = new ProductViewModel()
@@ -75,8 +73,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             var error = new LocalizedString("MissingPrice", "Please add a price");
             mockStringLocalizer.Setup(ml => ml["MissingPrice"]).Returns(error);
 
-
-
             var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
             ProductViewModel product = new ProductViewModel()
@@ -95,18 +91,36 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             Assert.Contains("Please add a price", newError);
         }
 
-        //[Fact]
-        //public void CheckPriceNotANumber()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckPriceNotANumber()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
 
+            var error = new LocalizedString("PriceNotANumber", "Please add a number as price");
+            mockStringLocalizer.Setup(ml => ml["PriceNotANumber"]).Returns(error);
 
-        //    // Act
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = null,
+                Description = "Test",
+                Stock = "12",
+                Details = "test"
+            };
 
-        //    // Assert
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
 
-        //}
+            // Assert
+            Assert.Contains("Please add a number as price", newError);
+        }
 
         //[Fact]
         //public void CheckPriceNotGreaterThanZero()
