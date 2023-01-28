@@ -122,18 +122,36 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             Assert.Contains("Please add a number as price", newError);
         }
 
-        //[Fact]
-        //public void CheckPriceNotGreaterThanZero()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckPriceNotGreaterThanZero()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
 
+            var error = new LocalizedString("PriceNotGreaterThanZero", "Price should be greater than zero");
+            mockStringLocalizer.Setup(ml => ml["PriceNotGreaterThanZero"]).Returns(error);
 
-        //    // Act
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = "0",
+                Description = "Test",
+                Stock = "12",
+                Details = "test"
+            };
 
-        //    // Assert
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
 
-        //}
+            // Assert
+            Assert.Contains("Price should be greater than zero", newError);
+        }
 
         //[Fact]
         //public void CheckMissingQuantity()
