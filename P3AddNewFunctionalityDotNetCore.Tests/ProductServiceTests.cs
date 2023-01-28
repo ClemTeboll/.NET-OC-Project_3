@@ -215,17 +215,35 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             Assert.Contains("Caution: quantity is not an integer", newError);
         }
 
-        //[Fact]
-        //public void CheckQuantityNotGreaterThanZero()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckQuantityNotGreaterThanZero()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
 
+            var error = new LocalizedString("StockNotGreaterThanZero", "Stock should be greater than zero");
+            mockStringLocalizer.Setup(ml => ml["StockNotGreaterThanZero"]).Returns(error);
 
-        //    // Act
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = "11",
+                Description = "Test",
+                Stock = "0",
+                Details = "test"
+            };
 
-        //    // Assert
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
 
-        //}
+            // Assert
+            Assert.Contains("Stock should be greater than zero", newError);
+        }
     }
 }
