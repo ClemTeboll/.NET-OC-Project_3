@@ -153,31 +153,67 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             Assert.Contains("Price should be greater than zero", newError);
         }
 
-        //[Fact]
-        //public void CheckMissingQuantity()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckMissingQuantity()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
 
+            var error = new LocalizedString("MissingQuantity", "Caution: quantity is missing");
+            mockStringLocalizer.Setup(ml => ml["MissingQuantity"]).Returns(error);
 
-        //    // Act
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = "11",
+                Description = "Test",
+                Stock = "",
+                Details = "test"
+            };
 
-        //    // Assert
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
 
-        //}
+            // Assert
+            Assert.Contains("Caution: quantity is missing", newError);
+        }
 
-        //[Fact]
-        //public void CheckQuantityNotAnInteger()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckQuantityNotAnInteger()
+        {
+            // Arrange
+            Mock<ICart> mockCart = new Mock<ICart>();
+            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
+            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
+            Mock<IProductService> mockProductService = new Mock<IProductService>();
+            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
 
+            var error = new LocalizedString("StockNotAnInteger", "Caution: quantity is not an integer");
+            mockStringLocalizer.Setup(ml => ml["StockNotAnInteger"]).Returns(error);
 
-        //    // Act
+            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
 
+            ProductViewModel product = new ProductViewModel()
+            {
+                Name = "Product",
+                Price = "11",
+                Description = "Test",
+                Stock = "/",
+                Details = "test"
+            };
 
-        //    // Assert
+            // Act
+            var newError = productService.CheckProductModelErrors(product);
 
-        //}
+            // Assert
+            Assert.Contains("Caution: quantity is not an integer", newError);
+        }
 
         //[Fact]
         //public void CheckQuantityNotGreaterThanZero()
