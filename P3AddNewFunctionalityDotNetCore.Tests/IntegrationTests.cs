@@ -64,8 +64,8 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
         [Fact]
         public void CheckProductIsSaved()
         {
-            var connection = new connectionHelper();
-            using (var context = connection.CreateInMemory())
+            connectionHelper connection = new connectionHelper();
+            using (P3Referential context = connection.CreateInMemory())
             {
                 Product product = new Product()
                 {
@@ -76,10 +76,10 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
                     Quantity = 12
                 };
 
-                var productService = new ProductRepository(context);
+                ProductRepository productService = new ProductRepository(context);
                 productService.SaveProduct(product);
 
-                var results = productService.GetAllProducts().ToList();
+                List<Product> results = productService.GetAllProducts().ToList();
 
                 Assert.NotEmpty(results);
             }
@@ -100,11 +100,11 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
                     Quantity = 12
                 };
 
-                var productService = new ProductRepository(context);
+                ProductRepository productService = new ProductRepository(context);
                 productService.SaveProduct(product);
                 productService.DeleteProduct(product.Id);
 
-                var results = productService.GetAllProducts().ToList();
+                List<Product> results = productService.GetAllProducts().ToList();
 
                 Assert.Empty(results);
             }
