@@ -1,69 +1,113 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Moq;
+using P3AddNewFunctionalityDotNetCore.Data;
 using P3AddNewFunctionalityDotNetCore.Models;
+using P3AddNewFunctionalityDotNetCore.Models.Entities;
 using P3AddNewFunctionalityDotNetCore.Models.Repositories;
 using P3AddNewFunctionalityDotNetCore.Models.Services;
 using P3AddNewFunctionalityDotNetCore.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
 
 namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
 {
     public class IntegrationTests
     {
+        public class connectionHelper : IDisposable
+        {
+            private bool disposedValue;
+
+            public P3Referential CreateInMemory()
+            {
+                var options = new DbContextOptionsBuilder<P3Referential>()
+                .UseInMemoryDatabase(databaseName: "P3Referential-2f561d3b-493f-46fd-83c9-6e2643e7bd0a")
+                .Options;
+
+                P3Referential context = new P3Referential(options);
+                if (context != null)
+                {
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+                }
+                return context;
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                        return;
+
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
 
         [Fact]
         public void CheckProductIsSaved()
         {
-            // Arrange
-            Mock<ICart> mockCart = new Mock<ICart>();
-            Mock<IOrderRepository> mockOrder = new Mock<IOrderRepository>();
-            Mock<IProductRepository> mockProductRepository = new Mock<IProductRepository>();
-            Mock<IProductService> mockProductService = new Mock<IProductService>();
-            Mock<IStringLocalizer<ProductService>> mockStringLocalizer = new Mock<IStringLocalizer<ProductService>>();
-
-            var productService = new ProductService(mockCart.Object, mockProductRepository.Object, mockOrder.Object, mockStringLocalizer.Object);
-
-            ProductViewModel product = new ProductViewModel()
+            var connection = new connectionHelper();
+            using (var context = connection.CreateInMemory())
             {
-                Name = "Product",
-                Price = "11",
-                Description = "Test",
-                Stock = "0",
-                Details = "test"
-            };
+                Product product = new Product()
+                {
+                    Name = "Product",
+                    Price = 10,
+                    Description = "Test",
+                    Details = "test",
+                    Quantity = 12
+                };
 
-            // Act
-            productService.SaveProduct(product);
+                var productService = new ProductRepository(context);
+                productService.SaveProduct(product);
 
-            //bool expected = true;
-            //bool actual;
+                var results = productService.GetAllProducts().ToList();
 
-            var options = new DbContextOptionsBuilder<AppIdentityDbContext>()
-                .UseInMemoryDatabase(databaseName: "Identity")
-                .Options;
-
-            using (var context = new AppIdentityDbContext(options))
-            {
-                // actual
+                Assert.NotEmpty(results);
             }
-
-            // Assert
-
-            //Assert.True(expected == actual);
         }
 
-        //[Fact]
-        //public void CheckProductIsDeleted()
-        //{
-        //    // Arrange
+        [Fact]
+        public void CheckProductIsDeleted()
+        {
+            var connection = new connectionHelper();
+            using (var context = connection.CreateInMemory())
+            {
+                Product product = new Product()
+                {
+                    Name = "Product",
+                    Price = 10,
+                    Description = "Test",
+                    Details = "test",
+                    Quantity = 12
+                };
 
-        //    // Act
+                var productService = new ProductRepository(context);
+                productService.SaveProduct(product);
+                productService.DeleteProduct(product.Id);
 
-        //    // Assert
-        //}
+                var results = productService.GetAllProducts().ToList();
+
+                Assert.Empty(results);
+            }
+        }
     }
 }
