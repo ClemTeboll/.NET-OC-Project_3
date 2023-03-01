@@ -16,21 +16,6 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
         {
             private bool disposedValue;
 
-            public P3Referential CreateInMemory()
-            {
-                var options = new DbContextOptionsBuilder<P3Referential>()
-                .UseInMemoryDatabase(databaseName: "P3Referential-2f561d3b-493f-46fd-83c9-6e2643e7bd0a")
-                .Options;
-
-                P3Referential context = new P3Referential(options);
-                if (context != null)
-                {
-                    context.Database.EnsureDeleted();
-                    context.Database.EnsureCreated();
-                }
-                return context;
-            }
-
             protected virtual void Dispose(bool disposing)
             {
                 if (!disposedValue)
@@ -46,6 +31,21 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
             {
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);
+            }
+
+            public P3Referential CreateInMemory()
+            {
+                var options = new DbContextOptionsBuilder<P3Referential>()
+                .UseInMemoryDatabase(databaseName: "P3Referential-2f561d3b-493f-46fd-83c9-6e2643e7bd0a")
+                .Options;
+
+                P3Referential context = new P3Referential(options);
+                if (context != null)
+                {
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+                }
+                return context;
             }
         }
 
