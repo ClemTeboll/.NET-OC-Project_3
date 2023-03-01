@@ -1,18 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Moq;
-using P3AddNewFunctionalityDotNetCore.Data;
 using P3AddNewFunctionalityDotNetCore.Models;
-using P3AddNewFunctionalityDotNetCore.Models.Entities;
 using P3AddNewFunctionalityDotNetCore.Models.Repositories;
 using P3AddNewFunctionalityDotNetCore.Models.Services;
 using P3AddNewFunctionalityDotNetCore.Models.ViewModels;
-using P3AddNewFunctionalityDotNetCore.Controllers;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 using Xunit;
-using Xunit.Sdk;
 
 namespace P3AddNewFunctionalityDotNetCore.Tests
 {
