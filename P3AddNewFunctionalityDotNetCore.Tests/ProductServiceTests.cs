@@ -18,16 +18,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
 {
     public class ProductServiceTests
     {
-        /// <summary>
-        /// Take this test method as a template to write your test method.
-        /// A test method must check if a definite method does its job:
-        /// returns an expected value from a particular set of parameters
-        /// </summary> 
-
-        // product name check
-        // mocking in all tests cases
-        // mock database -> mock datas --> mock error messages
-
         [Fact]
         public void CheckName()
         {

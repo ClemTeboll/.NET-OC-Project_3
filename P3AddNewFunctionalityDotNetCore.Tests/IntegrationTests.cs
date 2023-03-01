@@ -64,6 +64,7 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
         [Fact]
         public void CheckProductIsSaved()
         {
+            // Assert
             connectionHelper connection = new connectionHelper();
             using (P3Referential context = connection.CreateInMemory())
             {
@@ -79,8 +80,10 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
                 ProductRepository productService = new ProductRepository(context);
                 productService.SaveProduct(product);
 
+                // Act
                 List<Product> results = productService.GetAllProducts().ToList();
 
+                // Assert
                 Assert.NotEmpty(results);
             }
         }
@@ -88,6 +91,7 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
         [Fact]
         public void CheckProductIsDeleted()
         {
+            // Arrange
             var connection = new connectionHelper();
             using (var context = connection.CreateInMemory())
             {
@@ -104,8 +108,10 @@ namespace P3AddNewFunctionalityDotNetCore.IntegrationTests
                 productService.SaveProduct(product);
                 productService.DeleteProduct(product.Id);
 
+                // Act
                 List<Product> results = productService.GetAllProducts().ToList();
 
+                // Assert
                 Assert.Empty(results);
             }
         }
